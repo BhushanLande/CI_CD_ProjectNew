@@ -15,7 +15,7 @@ pipeline {
         NEXUSIP = '13.232.250.175'
         NEXUSPORT = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
-        NEXUS_LOGIN = 'nexuslogin'
+        NEXUS_LOGIN = 'NexusUser'
         SONARSERVER = 'sonarserver'
         SONARSCANNER = 'sonarscanner'
     }
@@ -81,7 +81,7 @@ pipeline {
                     groupId: 'QA',
                     version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
                     repository: "${RELEASE_REPO}",
-                    credentialsId: "${NEXUS_LOGIN}", // Added quotes around ${NEXUS_LOGIN}
+                    credentialsId: "${NEXUS_LOGIN}",
                     artifacts: [[
                         artifactId: 'vproapp',
                         classifier: '',
