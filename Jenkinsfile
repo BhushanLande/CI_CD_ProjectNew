@@ -12,7 +12,7 @@ pipeline {
         NEXUS_PASS = '%Tgbnji9'
         RELEASE_REPO = 'vprofile-release'
         CENTRAL_REPO = 'vpro-maven-central'
-        NEXUSIP = '13.232.250.175'
+        NEXUSIP = '3.109.121.19'
         NEXUSPORT = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'NexusUser'
@@ -92,5 +92,13 @@ pipeline {
             }
         }
     }
+    
+    post {
+        always {
+            echo 'Slack Notifications'
+            slackSend channel: '#jenkins-cicd',
+            color: COLOR_MAP[currentBuild.currentResult],
+            message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+        }
+    }
 }
-
