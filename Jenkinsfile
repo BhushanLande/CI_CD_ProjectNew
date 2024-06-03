@@ -1,3 +1,12 @@
+def COLOR_MAP = [
+    'SUCCESS': '#00FF00',
+    'FAILURE': '#FF0000',
+    'ABORTED': '#FFFF00',
+    'NOT_BUILT': '#808080',
+    'UNSTABLE': '#FFA500'
+]
+
+
 pipeline {
     agent any
 
@@ -91,8 +100,7 @@ pipeline {
                 )
             }
         }
-    }
-    
+    }    
     post {
         always {
             echo 'Slack Notifications'
