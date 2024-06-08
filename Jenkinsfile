@@ -6,6 +6,7 @@ def COLOR_MAP = [
     'UNSTABLE': '#FFA500'
 ]
 
+
 pipeline {
     agent any
 
