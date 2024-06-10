@@ -1,11 +1,10 @@
 def COLOR_MAP = [
-    'SUCCESS': '#00FF00',
-    'FAILURE': '#FF0000',
-    'ABORTED': '#FFFF00',
-    'NOT_BUILT': '#808080',
-    'UNSTABLE': '#FFA500'
+    SUCCESS: '#00FF00',
+    FAILURE: '#FF0000',
+    ABORTED: '#FFFF00',
+    NOT_BUILT: '#808080',
+    UNSTABLE: '#FFA500'
 ]
-
 
 pipeline {
     agent any
@@ -27,6 +26,9 @@ pipeline {
         NEXUS_LOGIN = 'NexusUser'
         SONARSERVER = 'sonarserver'
         SONARSCANNER = 'sonarscanner'
+        registryCredential = 'jenkins'
+        appRegistry = '452731569526.dkr.ecr.ap-south-1.amazonaws.com/vprofileapp'
+        vprofileRegistry = "https://452731569526.dkr.ecr.ap-south-1.amazonaws.com"
     }
 
     stages {
@@ -56,19 +58,19 @@ pipeline {
 
         stage('CODE ANALYSIS with SONARQUBE') {
             environment {
-                scannerHome = tool "${SONARSCANNER}"
+                scannerHome = tool SONARSCANNER
             }
             steps {
-                withSonarQubeEnv("${SONARSERVER}") {
-                    sh '''${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=vprofile \
-                    -Dsonar.projectName=vprofile-repo \
-                    -Dsonar.projectVersion=1.0 \
-                    -Dsonar.sources=src/ \
-                    -Dsonar.java.binaries=target \
-                    -Dsonar.junit.reportsPath=target/surefire-reports/ \
-                    -Dsonar.jacoco.reportsPath=target/jacoco.exec \
-                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
+                withSonarQubeEnv(SONARSERVER) {
+                    sh "${scannerHome}/bin/sonar-scanner " +
+                        "-Dsonar.projectKey=vprofile " +
+                        "-Dsonar.projectName=vprofile-repo " +
+                        "-Dsonar.projectVersion=1.0 " +
+                        "-Dsonar.sources=src/ " +
+                        "-Dsonar.java.binaries=target " +
+                        "-Dsonar.junit.reportsPath=target/surefire-reports/ " +
+                        "-Dsonar.jacoco.reportsPath=target/jacoco.exec " +
+                        "-Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml"
                 }
             }
         }
@@ -100,7 +102,26 @@ pipeline {
                 )
             }
         }
-    }    
+
+        stage('Build App image') {
+            steps {
+                script {
+                    dockerImage = docker.build(appRegistry + ":$BUILD_NUMBER", "./Docker-files/app/multistage/")
+                }
+            }
+        }
+
+        stage('Upload App Image') {
+            steps {
+                script {
+                    docker.withRegistry(vprofileRegistry, registryCredential) {
+                        dockerImage.push("$BUILD_NUMBER")
+                        dockerImage.push('latest')
+                    }
+                }
+            }
+        }
+    }
     post {
         always {
             echo 'Slack Notifications'
