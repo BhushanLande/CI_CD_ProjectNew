@@ -18,3 +18,6 @@ Click "Generate token" and copy the token.
 and username BhushanLande or b.lande525@gmail.com
 pass user key
 
+git config --global credential.helper store
+
+
