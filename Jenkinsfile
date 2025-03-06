@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven "MAVEN3"
-        jdk "OracleJDK8"
+        jdk "OracleJDK11"
     }
 
     environment {
@@ -12,7 +12,7 @@ pipeline {
         NEXUS_PASS = '%Tgbhu8'
         RELEASE_REPO = 'vprofile-release'
         CENTRAL_REPO = 'vpro-maven-central'
-        NEXUSIP = '13.201.18.83'
+        NEXUSIP = '3.110.54.31'
         NEXUSPORT = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
